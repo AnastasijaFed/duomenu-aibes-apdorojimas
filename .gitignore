@@ -27,3 +27,48 @@ ENV/
 .coverage
 htmlcov/
 
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Environment variables / secrets
+.env
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# ML artifacts
+data/
+models/
+checkpoints/
+runs/
+logs/
+wandb/
+mlruns/
+*.pt
+*.pth
+*.ckpt
+*.h5
+*.pkl
+
+# Build / dist
+build/
+dist/
+
+# Testing
+.pytest_cache/
+.coverage
