@@ -40,8 +40,6 @@ def kruskal_wallis_table(df, features, class_column, classes):
         h_statistic, p_value = kruskal(*values_by_class)
 
         total_count = sum(len(values) for values in values_by_class)
-        number_of_classes = len(classes)
-        degrees_of_freedom = number_of_classes - 1
 
         epsilon_squared = h_statistic / (total_count - 1)
 
@@ -49,7 +47,6 @@ def kruskal_wallis_table(df, features, class_column, classes):
             "feature": feature,
             "n": total_count,
             "H": h_statistic,
-            "degrees_of_freedom": degrees_of_freedom,
             "p_value": p_value,
             "epsilon_sq": epsilon_squared,
             "significant": p_value < SIGNIFICANCE_LEVEL,
@@ -58,6 +55,13 @@ def kruskal_wallis_table(df, features, class_column, classes):
     results = pd.DataFrame(rows)
 
     return results.sort_values("H", ascending=False).reset_index(drop=True)
+
+
+def format_p_value(p_value):
+    if p_value < 0.001:
+        return "< 0.001"
+
+    return f"{p_value:.3f}"
 
 
 if __name__ == "__main__":
@@ -69,7 +73,7 @@ if __name__ == "__main__":
         index=False,
         formatters={
             "H": "{:.2f}".format,
-            "p_value": "{:.2e}".format,
+            "p_value": format_p_value,
             "epsilon_sq": "{:.3f}".format,
         },
     ))
