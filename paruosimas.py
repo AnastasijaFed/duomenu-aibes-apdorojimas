@@ -3,12 +3,12 @@ import matplotlib.pyplot as plt
 
 df = pd.read_csv("duomenys/duziai.csv")
 
-KLASES = ["N", "L", "R", "V", "A"]
+CLASSES = ["N", "L", "R", "V", "A"]
 
 # Paliekame tik tiriamas klases ir pašaliname 114 įrašą,
 # nes ECGPUWAVE jame analizavo kitą derivaciją nei kituose įrašuose.
 df_5 = df[
-    df["klase"].isin(KLASES)
+    df["klase"].isin(CLASSES)
     & (df["irasas"].astype(str) != "114")
 ].copy()
 
@@ -17,34 +17,48 @@ print("PRIEŠ ATRANKĄ:")
 print(pd.crosstab(df_5["irasas"], df_5["klase"], margins=True))
 
 # Atsitiktinai atrenkame po 1000 dūžių iš kiekvienos klasės
-tiriamoji = (
+sample_df = (
     df_5
     .groupby("klase", group_keys=False)
     .sample(n=1000, random_state=42)
     .reset_index(drop=True)
 )
 
-# Išsaugome tiriamąją aibę
-tiriamoji.to_csv("duomenys/tiriamoji.csv", index=False)
+# Aiškiai atskiriame du skirtingus RR intervalų santykius.
+#
+# Pradiniame duomenų faile stulpelis RR_sant jau reiškia:
+# RR_pre / RR_vid.
+# Jį paliekame nepakeistą, kad nesugadintume ankstesnio duomenų formato,
+# bet analizei sukuriame aiškiai pavadintą kopiją RR_sant_vid.
+sample_df["RR_sant_vid"] = sample_df["RR_sant"]
+
+# Antras santykis lygina RR intervalą prieš dūžį su intervalu po dūžio.
+sample_df["RR_sant_post"] = (
+    sample_df["RR_pre"] / sample_df["RR_post"]
+)
+
+# Išsaugome tiriamąją aibę jau su abiem RR santykiais.
+sample_df.to_csv("duomenys/tiriamoji.csv", index=False)
 
 print("\nPO ATRANKOS:")
-print(tiriamoji["klase"].value_counts())
+print(sample_df["klase"].value_counts())
 
 print("\nDŪŽIAI PAGAL ĮRAŠĄ IR KLASĘ:")
 print(pd.crosstab(
-    tiriamoji["irasas"],
-    tiriamoji["klase"],
+    sample_df["irasas"],
+    sample_df["klase"],
     margins=True
 ))
 
 print("\nTRŪKSTAMOS REIKŠMĖS:")
 
 # Kol kas tik visi analizei aktualūs požymiai
-POZYMIAI = [
+FEATURES = [
     "RR_pre",
     "RR_post",
     "RR_vid",
-    "RR_sant",
+    "RR_sant_vid",
+    "RR_sant_post",
     "PR",
     "QRS",
     "QT",
@@ -59,37 +73,37 @@ POZYMIAI = [
 ]
 
 # Bendras trūkstamų reikšmių kiekis ir procentas
-trukstamos = pd.DataFrame({
-    "kiekis": tiriamoji[POZYMIAI].isna().sum(),
-    "procentai": tiriamoji[POZYMIAI].isna().mean() * 100
+missing = pd.DataFrame({
+    "kiekis": sample_df[FEATURES].isna().sum(),
+    "procentai": sample_df[FEATURES].isna().mean() * 100
 })
 
 print("\nBendrai:")
-print(trukstamos.round(2))
+print(missing.round(2))
 
 # Trūkstamų reikšmių procentas pagal klasę
-trukstamos_pagal_klase = (
-    tiriamoji
-    .groupby("klase")[POZYMIAI]
+missing_by_class = (
+    sample_df
+    .groupby("klase")[FEATURES]
     .apply(lambda x: x.isna().mean() * 100)
 )
 
 print("\nPagal klases (%):")
-print(trukstamos_pagal_klase.round(2))
+print(missing_by_class.round(2))
 
 print("\nECGPUWAVE DŪŽIŲ SUDERINIMAS:")
 
-rasta_pagal_klase = (
-    tiriamoji.groupby("klase")["rastas"]
+found_by_class = (
+    sample_df.groupby("klase")["rastas"]
     .agg(["sum", "count", "mean"])
 )
 
-rasta_pagal_klase["procentai"] = (
-    rasta_pagal_klase["mean"] * 100
+found_by_class["procentai"] = (
+    found_by_class["mean"] * 100
 )
 
 print(
-    rasta_pagal_klase[
+    found_by_class[
         ["sum", "count", "procentai"]
     ].round(2)
 )
@@ -98,49 +112,49 @@ print(
 print("\nP BANGA PAGAL KLASĘ (%):")
 print("-1 = dūžis nesuderintas, 0 = P banga neaptikta, 1 = P banga aptikta")
 
-p_banga = (
+p_wave = (
     pd.crosstab(
-        tiriamoji["klase"],
-        tiriamoji["P_yra"].fillna(-1),
+        sample_df["klase"],
+        sample_df["P_yra"].fillna(-1),
         normalize="index"
     ) * 100
 )
 
-print(p_banga.round(1))
+print(p_wave.round(1))
 
 
 print("\nTRŪKSTAMOS REIKŠMĖS PAGAL 'rastas':")
 
 for col in ["PR", "QRS", "QT", "P_amp", "T_amp", "T_tipas"]:
-    lentele = pd.crosstab(
-        tiriamoji["rastas"],
-        tiriamoji[col].isna()
+    table = pd.crosstab(
+        sample_df["rastas"],
+        sample_df[col].isna()
     )
 
     print(f"\n{col}:")
-    print(lentele)
+    print(table)
 
 
 print("\nN DŪŽIAI BE P BANGOS PAGAL RITMĄ:")
 
 # Naudojame visus N klasės dūžius be 114 įrašo,
 # nes 1000 dūžių imtyje reti ritmai būtų menkai atstovaujami.
-n = df_5[
+n_beats = df_5[
     (df_5["klase"] == "N")
     & df_5["P_yra"].notna()
 ].copy()
 
-p_truksta = (
-    (n["P_yra"] == 0)
-    .groupby(n["ritmas"], dropna=False)
+p_missing = (
+    (n_beats["P_yra"] == 0)
+    .groupby(n_beats["ritmas"], dropna=False)
     .agg(["mean", "size"])
 )
 
-p_truksta["mean"] = (
-    p_truksta["mean"] * 100
+p_missing["mean"] = (
+    p_missing["mean"] * 100
 ).round(1)
 
-p_truksta = p_truksta.rename(
+p_missing = p_missing.rename(
     columns={
         "mean": "P_nerasta_%",
         "size": "duziu"
@@ -148,7 +162,7 @@ p_truksta = p_truksta.rename(
 )
 
 print(
-    p_truksta.sort_values(
+    p_missing.sort_values(
         "duziu",
         ascending=False
     )
@@ -156,35 +170,35 @@ print(
 
 print("\nP NERASTA N DŪŽIUOSE SINUSINIAME RITME PAGAL ĮRAŠĄ:")
 
-sin = n[n["ritmas"] == "(N"].copy()
+sinus = n_beats[n_beats["ritmas"] == "(N"].copy()
 
-p_pagal_irasa = (
-    (sin["P_yra"] == 0)
-    .groupby(sin["irasas"])
+p_by_record = (
+    (sinus["P_yra"] == 0)
+    .groupby(sinus["irasas"])
     .agg(["mean", "size"])
 )
 
-p_pagal_irasa["mean"] = (
-    p_pagal_irasa["mean"] * 100
+p_by_record["mean"] = (
+    p_by_record["mean"] * 100
 ).round(1)
 
-p_pagal_irasa = p_pagal_irasa.rename(
+p_by_record = p_by_record.rename(
     columns={
         "mean": "P_nerasta_%",
         "size": "duziu"
     }
 )
 
-print(p_pagal_irasa.sort_values("P_nerasta_%"))
+print(p_by_record.sort_values("P_nerasta_%"))
 
 
 print("\nDUBLIKATŲ PATIKRA:")
 
-dublikatai = tiriamoji.duplicated(
+duplicates = sample_df.duplicated(
     subset=["irasas", "R"]
 ).sum()
 
-print("Dublikatų (irasas + R):", dublikatai)
+print("Dublikatų (irasas + R):", duplicates)
 
 
 print("\nNELOGIŠKOS REIKŠMĖS (<= 0):")
@@ -193,48 +207,49 @@ for col in [
     "RR_pre",
     "RR_post",
     "RR_vid",
-    "RR_sant",
+    "RR_sant_vid",
+    "RR_sant_post",
     "PR",
     "QRS",
     "QT",
     "QTc"
 ]:
-    kiek = (tiriamoji[col] <= 0).sum()
-    print(col, kiek)
+    count = (sample_df[col] <= 0).sum()
+    print(col, count)
 
 
 print("\nUŽ KONTROLINIŲ RIBŲ PAGAL KLASĘ:")
 
-RIBOS = {
+LIMITS = {
     "PR": (50, 400),
     "QRS": (40, 250),
     "QT": (200, 700)
 }
 
-for col, (nuo, iki) in RIBOS.items():
+for col, (low, high) in LIMITS.items():
 
-    uz_ribu = (
-        tiriamoji[col].notna()
-        & ~tiriamoji[col].between(nuo, iki)
+    out_of_range = (
+        sample_df[col].notna()
+        & ~sample_df[col].between(low, high)
     )
 
-    print(f"\n{col} ({nuo}–{iki} ms):")
+    print(f"\n{col} ({low}–{high} ms):")
 
     print(
-        uz_ribu
-        .groupby(tiriamoji["klase"])
+        out_of_range
+        .groupby(sample_df["klase"])
         .agg(["sum", "count"])
     )
 
 print("\nUŽ RIBŲ: ŽEMIAU / AUKŠČIAU:")
 
-for col, (nuo, iki) in RIBOS.items():
-    x = tiriamoji[col]
+for col, (low, high) in LIMITS.items():
+    x = sample_df[col]
 
     print(
         f"{col}: "
-        f"< {nuo}: {(x < nuo).sum()}, "
-        f"> {iki}: {(x > iki).sum()}, "
+        f"< {low}: {(x < low).sum()}, "
+        f"> {high}: {(x > high).sum()}, "
         f"min = {x.min():.1f}, "
         f"max = {x.max():.1f}"
     )
@@ -242,11 +257,12 @@ for col, (nuo, iki) in RIBOS.items():
 
 print("\nIŠSKIRTYS PAGAL IQR TAISYKLĘ KLASĖS VIDUJE (%):")
 
-SKAITINIAI = [
+NUMERIC_FEATURES = [
     "RR_pre",
     "RR_post",
     "RR_vid",
-    "RR_sant",
+    "RR_sant_vid",
+    "RR_sant_post",
     "PR",
     "QRS",
     "QT",
@@ -259,7 +275,7 @@ SKAITINIAI = [
 ]
 
 
-def iqr_isskirtys(x):
+def iqr_outlier_pct(x):
     # Trūkstamų reikšmių į išskirčių skaičiavimą neįtraukiame
     x = x.dropna()
 
@@ -267,35 +283,55 @@ def iqr_isskirtys(x):
     q3 = x.quantile(0.75)
     iqr = q3 - q1
 
-    apatine_riba = q1 - 1.5 * iqr
-    virsutine_riba = q3 + 1.5 * iqr
+    lower_bound = q1 - 1.5 * iqr
+    upper_bound = q3 + 1.5 * iqr
 
-    isksirtys = (
-        (x < apatine_riba)
-        | (x > virsutine_riba)
+    outliers = (
+        (x < lower_bound)
+        | (x > upper_bound)
     )
 
-    return isksirtys.mean() * 100
+    return outliers.mean() * 100
 
 
-isksirtys = (
-    tiriamoji
-    .groupby("klase")[SKAITINIAI]
-    .agg(iqr_isskirtys)
+outliers_by_class = (
+    sample_df
+    .groupby("klase")[NUMERIC_FEATURES]
+    .agg(iqr_outlier_pct)
     .T
 )
 
-print(isksirtys.round(1))
+print(outliers_by_class.round(1))
+
+
+print("\nABIEJŲ RR SANTYKIŲ PALYGINIMAS PAGAL KLASĘ:")
+
+for col in ["RR_sant_vid", "RR_sant_post"]:
+    print(f"\n{col}:")
+    print(
+        sample_df
+        .groupby("klase")[col]
+        .agg(
+            kiekis="count",
+            vidurkis="mean",
+            mediana="median",
+            std="std",
+            min="min",
+            max="max"
+        )
+        .round(3)
+    )
+
 
 print("\nĮTARTINOS QRS REIKŠMĖS:")
 
-qrs_itartinos = tiriamoji[
-    tiriamoji["QRS"].notna()
-    & ~tiriamoji["QRS"].between(40, 250)
+qrs_suspicious = sample_df[
+    sample_df["QRS"].notna()
+    & ~sample_df["QRS"].between(40, 250)
 ][["irasas", "R", "klase", "QRS", "QRS_on", "QRS_off"]]
 
 print(
-    qrs_itartinos
+    qrs_suspicious
     .sort_values("QRS")
     .to_string(index=False)
 )
@@ -303,13 +339,13 @@ print(
 
 print("\nĮTARTINOS QT REIKŠMĖS:")
 
-qt_itartinos = tiriamoji[
-    tiriamoji["QT"].notna()
-    & ~tiriamoji["QT"].between(200, 700)
+qt_suspicious = sample_df[
+    sample_df["QT"].notna()
+    & ~sample_df["QT"].between(200, 700)
 ][["irasas", "R", "klase", "QT", "QRS_on", "T_off"]]
 
 print(
-    qt_itartinos
+    qt_suspicious
     .sort_values("QT")
     .to_string(index=False)
 )
@@ -318,7 +354,7 @@ print(
 print("\nQRS UŽ RIBŲ PAGAL ĮRAŠĄ:")
 
 print(
-    qrs_itartinos
+    qrs_suspicious
     .groupby(["irasas", "klase"])
     .size()
     .sort_values(ascending=False)
@@ -328,7 +364,7 @@ print(
 print("\nQT UŽ RIBŲ PAGAL ĮRAŠĄ:")
 
 print(
-    qt_itartinos
+    qt_suspicious
     .groupby(["irasas", "klase"])
     .size()
     .sort_values(ascending=False)
@@ -338,147 +374,147 @@ print("\nLOGINĖ ANOTACIJŲ PATIKRA:")
 
 # Kito dūžio R vietą randame PILNOJE aibėje,
 # nes tiriamoji aibė yra atsitiktinė 5000 dūžių imtis.
-df_su_kitu_r = (
+df_with_next_r = (
     df
     .sort_values(["irasas", "R"])
     .copy()
 )
 
-df_su_kitu_r["R_kitas"] = (
-    df_su_kitu_r
+df_with_next_r["R_kitas"] = (
+    df_with_next_r
     .groupby("irasas")["R"]
     .shift(-1)
 )
 
-tikrinimas = tiriamoji.merge(
-    df_su_kitu_r[["irasas", "R", "R_kitas"]],
+check = sample_df.merge(
+    df_with_next_r[["irasas", "R", "R_kitas"]],
     on=["irasas", "R"],
     how="left"
 )
 
 
 # 1. R taškas turi būti QRS komplekso viduje
-qrs_neapima_r = (
-    tikrinimas["QRS_on"].notna()
-    & tikrinimas["QRS_off"].notna()
+qrs_excludes_r = (
+    check["QRS_on"].notna()
+    & check["QRS_off"].notna()
     & (
-        (tikrinimas["R"] < tikrinimas["QRS_on"])
-        | (tikrinimas["R"] > tikrinimas["QRS_off"])
+        (check["R"] < check["QRS_on"])
+        | (check["R"] > check["QRS_off"])
     )
 )
 
 print(
     "R nepatenka tarp QRS_on ir QRS_off:",
-    qrs_neapima_r.sum()
+    qrs_excludes_r.sum()
 )
 
 
 # 2. Dabartinio QRS pabaiga neturėtų nueiti už kito R
-qrs_uz_kito_r = (
-    tikrinimas["QRS_off"].notna()
-    & tikrinimas["R_kitas"].notna()
-    & (tikrinimas["QRS_off"] >= tikrinimas["R_kitas"])
+qrs_past_next_r = (
+    check["QRS_off"].notna()
+    & check["R_kitas"].notna()
+    & (check["QRS_off"] >= check["R_kitas"])
 )
 
 print(
     "QRS_off pasiekia / viršija kito dūžio R:",
-    qrs_uz_kito_r.sum()
+    qrs_past_next_r.sum()
 )
 
 
 # 3. T pabaiga turi būti po QRS pabaigos
-t_pries_qrs_pabaiga = (
-    tikrinimas["T_off"].notna()
-    & tikrinimas["QRS_off"].notna()
-    & (tikrinimas["T_off"] <= tikrinimas["QRS_off"])
+t_before_qrs_end = (
+    check["T_off"].notna()
+    & check["QRS_off"].notna()
+    & (check["T_off"] <= check["QRS_off"])
 )
 
 print(
     "T_off yra prieš QRS_off arba sutampa:",
-    t_pries_qrs_pabaiga.sum()
+    t_before_qrs_end.sum()
 )
 
 
 # 4. Patikriname, kiek T bangų tęsiasi iki kito R ar už jo
-t_uz_kito_r = (
-    tikrinimas["T_off"].notna()
-    & tikrinimas["R_kitas"].notna()
-    & (tikrinimas["T_off"] >= tikrinimas["R_kitas"])
+t_past_next_r = (
+    check["T_off"].notna()
+    & check["R_kitas"].notna()
+    & (check["T_off"] >= check["R_kitas"])
 )
 
 print(
     "T_off pasiekia / viršija kito dūžio R:",
-    t_uz_kito_r.sum()
+    t_past_next_r.sum()
 )
 
 
 # 5. PR loginė patikra
-p_po_qrs = (
-    tikrinimas["P_on"].notna()
-    & tikrinimas["QRS_on"].notna()
-    & (tikrinimas["P_on"] >= tikrinimas["QRS_on"])
+p_after_qrs = (
+    check["P_on"].notna()
+    & check["QRS_on"].notna()
+    & (check["P_on"] >= check["QRS_on"])
 )
 
 print(
     "P_on yra ties QRS_on arba po jo:",
-    p_po_qrs.sum()
+    p_after_qrs.sum()
 )
 
 
 print("\nĮTARTINI ATVEJAI PAGAL KLASĘ:")
 
 print(pd.DataFrame({
-    "QRS_neapima_R": qrs_neapima_r.groupby(tikrinimas["klase"]).sum(),
-    "QRS_uz_kito_R": qrs_uz_kito_r.groupby(tikrinimas["klase"]).sum(),
-    "T_pries_QRS_off": t_pries_qrs_pabaiga.groupby(tikrinimas["klase"]).sum(),
-    "T_uz_kito_R": t_uz_kito_r.groupby(tikrinimas["klase"]).sum(),
-    "P_on_po_QRS_on": p_po_qrs.groupby(tikrinimas["klase"]).sum(),
+    "QRS_neapima_R": qrs_excludes_r.groupby(check["klase"]).sum(),
+    "QRS_uz_kito_R": qrs_past_next_r.groupby(check["klase"]).sum(),
+    "T_pries_QRS_off": t_before_qrs_end.groupby(check["klase"]).sum(),
+    "T_uz_kito_R": t_past_next_r.groupby(check["klase"]).sum(),
+    "P_on_po_QRS_on": p_after_qrs.groupby(check["klase"]).sum(),
 }))
 
 print("\nPATIKSLINTA QRS LOGINĖ PATIKRA:")
 
 # QRS_on ir QRS_off yra ECGPUWAVE anotacijos,
 # todėl tikriname ECGPUWAVE aptiktą R_ecg, o ne ekspertinį R.
-qrs_neapima_r_ecg = (
-    tikrinimas["R_ecg"].notna()
-    & tikrinimas["QRS_on"].notna()
-    & tikrinimas["QRS_off"].notna()
+qrs_excludes_r_ecg = (
+    check["R_ecg"].notna()
+    & check["QRS_on"].notna()
+    & check["QRS_off"].notna()
     & (
-        (tikrinimas["R_ecg"] < tikrinimas["QRS_on"])
-        | (tikrinimas["R_ecg"] > tikrinimas["QRS_off"])
+        (check["R_ecg"] < check["QRS_on"])
+        | (check["R_ecg"] > check["QRS_off"])
     )
 )
 
 print(
     "R_ecg nepatenka tarp QRS_on ir QRS_off:",
-    qrs_neapima_r_ecg.sum()
+    qrs_excludes_r_ecg.sum()
 )
 
 
 # Kiek skiriasi ekspertinis R nuo ECGPUWAVE aptikto R
-r_atstumas = (
-    tikrinimas.loc[
-        tikrinimas["R_ecg"].notna(),
+r_distance = (
+    check.loc[
+        check["R_ecg"].notna(),
         "R"
     ]
-    - tikrinimas.loc[
-        tikrinimas["R_ecg"].notna(),
+    - check.loc[
+        check["R_ecg"].notna(),
         "R_ecg"
     ]
 ).abs()
 
 print("\n|R - R_ecg| atstumas mėginiais:")
-print(r_atstumas.describe().round(2))
+print(r_distance.describe().round(2))
 
 
 print("\n|R - R_ecg| pagal klasę:")
 
-tikrinimas["R_atstumas"] = (
-    tikrinimas["R"] - tikrinimas["R_ecg"]
+check["R_atstumas"] = (
+    check["R"] - check["R_ecg"]
 ).abs()
 
 print(
-    tikrinimas
+    check
     .groupby("klase")["R_atstumas"]
     .agg(["count", "mean", "median", "max"])
     .round(2)
@@ -488,8 +524,8 @@ print(
 print("\nANKSTESNI 72 ATVEJAI - JŲ R ATSTUMAS:")
 
 print(
-    tikrinimas.loc[
-        qrs_neapima_r,
+    check.loc[
+        qrs_excludes_r,
         ["irasas", "klase", "R", "R_ecg",
          "R_atstumas", "QRS_on", "QRS_off"]
     ]
@@ -499,64 +535,68 @@ print(
 
 print("\nPIRMINIS DUOMENŲ TVARKYMAS:")
 
-sutvarkyta = tiriamoji.copy()
+cleaned = sample_df.copy()
 
 # Aiškiai nelogiškos PR reikšmės:
 # P pradžia negali būti ties QRS pradžia arba po jos.
-blogas_pr = (
-    sutvarkyta["PR"].notna()
-    & (sutvarkyta["PR"] <= 0)
+invalid_pr = (
+    cleaned["PR"].notna()
+    & (cleaned["PR"] <= 0)
 )
 
-print("PR reikšmių, pakeičiamų į NaN:", blogas_pr.sum())
+print("PR reikšmių, pakeičiamų į NaN:", invalid_pr.sum())
 
-sutvarkyta.loc[blogas_pr, "PR"] = pd.NA
+cleaned.loc[invalid_pr, "PR"] = pd.NA
 
 # Išsaugome atskirai – pradinės imties neperrašome.
-sutvarkyta.to_csv(
+cleaned.to_csv(
     "duomenys/tiriamoji_sutvarkyta.csv",
     index=False
 )
 
-print("\nPAGRINDINIŲ POŽYMIŲ TRŪKSTAMUMAS PO TVARKYMO:")
+print("\nKANDIDATINIŲ POŽYMIŲ TRŪKSTAMUMAS PO TVARKYMO:")
 
-PAGRINDINIAI = [
+# Šie požymiai kol kas yra kandidatai išsamesnei analizei.
+# Galutinius 3–4 požymius pasirinksime tik palyginę jų kokybę
+# ir pasiskirstymą tarp klasių.
+CANDIDATE_FEATURES = [
     "QRS",
-    "RR_sant",
+    "RR_sant_vid",
+    "RR_sant_post",
     "RR_pre",
     "QTc",
     "P_yra",
     "T_tipas"
 ]
 
-truksta_pagrindiniu = pd.DataFrame({
-    "kiekis": sutvarkyta[PAGRINDINIAI].isna().sum(),
-    "procentai": sutvarkyta[PAGRINDINIAI].isna().mean() * 100
+missing_candidates = pd.DataFrame({
+    "kiekis": cleaned[CANDIDATE_FEATURES].isna().sum(),
+    "procentai": cleaned[CANDIDATE_FEATURES].isna().mean() * 100
 })
 
-print(truksta_pagrindiniu.round(2))
+print(missing_candidates.round(2))
 
 
-print("\nEILUTĖS, KURIOSE TRŪKSTA BENT VIENO PAGRINDINIO POŽYMIO:")
+print("\nEILUTĖS, KURIOSE TRŪKSTA BENT VIENO KANDIDATINIO POŽYMIO:")
 
-truksta_bent_vieno = (
-    sutvarkyta[PAGRINDINIAI]
+missing_any = (
+    cleaned[CANDIDATE_FEATURES]
     .isna()
     .any(axis=1)
 )
 
-print("Kiekis:", truksta_bent_vieno.sum())
+print("Kiekis:", missing_any.sum())
 print(
     "Procentai:",
-    round(truksta_bent_vieno.mean() * 100, 2)
+    round(missing_any.mean() * 100, 2)
 )
 
 
 print("\nTRŪKSTAMOS EILUTĖS PAGAL KLASĘ:")
 
 print(
-    truksta_bent_vieno
-    .groupby(sutvarkyta["klase"])
+    missing_any
+    .groupby(cleaned["klase"])
     .agg(["sum", "count", "mean"])
     .assign(procentai=lambda x: x["mean"] * 100)
     [["sum", "count", "procentai"]]
@@ -566,58 +606,59 @@ print(
 
 print("\nPILNOS EILUTĖS PAGAL KLASĘ:")
 
-pilna_eilute = ~truksta_bent_vieno
+complete_row = ~missing_any
 
 print(
-    pilna_eilute
-    .groupby(sutvarkyta["klase"])
+    complete_row
+    .groupby(cleaned["klase"])
     .sum()
 )
 
-print("\nPILNŲ EILUČIŲ AIBĖ PAGRINDINIŲ POŽYMIŲ ANALIZEI:")
+print("\nPILNŲ EILUČIŲ AIBĖ KANDIDATINIŲ POŽYMIŲ ANALIZEI:")
 
-analizei = (
-    sutvarkyta
-    .dropna(subset=PAGRINDINIAI)
+analysis_df = (
+    cleaned
+    .dropna(subset=CANDIDATE_FEATURES)
     .copy()
 )
 
-print("Eilučių prieš:", len(sutvarkyta))
-print("Eilučių po:", len(analizei))
+print("Eilučių prieš:", len(cleaned))
+print("Eilučių po:", len(analysis_df))
 print(
     "Pašalinta:",
-    len(sutvarkyta) - len(analizei)
+    len(cleaned) - len(analysis_df)
 )
 
 print("\nKLASIŲ PASISKIRSTYMAS PO TRŪKSTAMŲ EILUČIŲ PAŠALINIMO:")
-print(analizei["klase"].value_counts().sort_index())
+print(analysis_df["klase"].value_counts().sort_index())
 
 print("\nKLASIŲ PROPORCIJOS (%):")
 print(
     (
-        analizei["klase"]
+        analysis_df["klase"]
         .value_counts(normalize=True)
         .sort_index()
         * 100
     ).round(2)
 )
 
-analizei.to_csv(
+analysis_df.to_csv(
     "duomenys/tiriamoji_analizei.csv",
     index=False
 )
 
 print("\nAPRAŠOMOJI STATISTIKA PAGAL KLASĘ:")
 
-SKAITINIAI_PAGRINDINIAI = [
+CANDIDATE_NUMERIC = [
     "QRS",
-    "RR_sant",
+    "RR_sant_vid",
+    "RR_sant_post",
     "RR_pre",
     "QTc"
 ]
 
 
-def aprasomoji_statistika(x):
+def descriptive_stats(x):
     return pd.Series({
         "n": x.count(),
         "vidurkis": x.mean(),
@@ -630,59 +671,59 @@ def aprasomoji_statistika(x):
     })
 
 
-for col in SKAITINIAI_PAGRINDINIAI:
+for col in CANDIDATE_NUMERIC:
     print(f"\n{col}:")
 
-    lentele = (
-        analizei
+    table = (
+        analysis_df
         .groupby("klase")[col]
-        .apply(aprasomoji_statistika)
+        .apply(descriptive_stats)
         .unstack()
     )
 
-    print(lentele.round(2))
+    print(table.round(2))
 
 
 print("\nP_YRA PASISKIRSTYMAS PAGAL KLASĘ (%):")
 
-p_yra_proc = (
+p_present_pct = (
     pd.crosstab(
-        analizei["klase"],
-        analizei["P_yra"],
+        analysis_df["klase"],
+        analysis_df["P_yra"],
         normalize="index"
     ) * 100
 )
 
-print(p_yra_proc.round(1))
+print(p_present_pct.round(1))
 
 
 print("\nT_TIPAS PASISKIRSTYMAS PAGAL KLASĘ (%):")
 
-t_tipas_proc = (
+t_type_pct = (
     pd.crosstab(
-        analizei["klase"],
-        analizei["T_tipas"],
+        analysis_df["klase"],
+        analysis_df["T_tipas"],
         normalize="index"
     ) * 100
 )
 
-print(t_tipas_proc.round(1))
+print(t_type_pct.round(1))
 
 print("\nKURIAMOS PAGRINDINIŲ POŽYMIŲ VIZUALIZACIJOS:")
 
-KLASIU_TVARKA = ["N", "L", "R", "V", "A"]
+CLASS_ORDER = ["N", "L", "R", "V", "A"]
 
-for col in ["QRS", "RR_sant", "RR_pre", "QTc"]:
-    duomenys = [
-        analizei.loc[analizei["klase"] == klase, col]
-        for klase in KLASIU_TVARKA
+for col in ["QRS", "RR_sant_vid", "RR_sant_post", "RR_pre", "QTc"]:
+    data = [
+        analysis_df.loc[analysis_df["klase"] == cls, col]
+        for cls in CLASS_ORDER
     ]
 
     plt.figure(figsize=(8, 5))
 
     plt.boxplot(
-        duomenys,
-        tick_labels=KLASIU_TVARKA,
+        data,
+        tick_labels=CLASS_ORDER,
         showfliers=True
     )
 
@@ -695,17 +736,17 @@ for col in ["QRS", "RR_sant", "RR_pre", "QTc"]:
 
 
 # P_yra pasiskirstymas
-p_yra_plot = (
+p_present_plot = (
     pd.crosstab(
-        analizei["klase"],
-        analizei["P_yra"],
+        analysis_df["klase"],
+        analysis_df["P_yra"],
         normalize="index"
     )
-    .reindex(KLASIU_TVARKA)
+    .reindex(CLASS_ORDER)
     * 100
 )
 
-p_yra_plot.plot(
+p_present_plot.plot(
     kind="bar",
     stacked=True,
     figsize=(8, 5),
@@ -725,7 +766,7 @@ plt.show()
 
 # T_tipas pasiskirstymas
 # Skaitinius ECGPUWAVE T bangos tipo kodus pakeičiame aiškiais pavadinimais.
-T_TIPAI = {
+T_TYPES = {
     0.0: "normali",
     1.0: "apversta",
     2.0: "tik teigiama",
@@ -734,18 +775,18 @@ T_TIPAI = {
     5.0: "dvifazė +/−"
 }
 
-t_tipas_plot = (
+t_type_plot = (
     pd.crosstab(
-        analizei["klase"],
-        analizei["T_tipas"],
+        analysis_df["klase"],
+        analysis_df["T_tipas"],
         normalize="index"
     )
-    .reindex(KLASIU_TVARKA)
-    .rename(columns=T_TIPAI)
+    .reindex(CLASS_ORDER)
+    .rename(columns=T_TYPES)
     * 100
 )
 
-t_tipas_plot.plot(
+t_type_plot.plot(
     kind="bar",
     stacked=True,
     figsize=(9, 5),
@@ -761,15 +802,15 @@ plt.show()
 
 print("\nASIMETRIJOS KOEFICIENTAS PAGAL KLASĘ:")
 print(
-    analizei
-    .groupby("klase")[SKAITINIAI_PAGRINDINIAI]
+    analysis_df
+    .groupby("klase")[CANDIDATE_NUMERIC]
     .skew()
     .round(2)
 )
 
 print("\nMASTELIAI (min–max):")
 print(
-    analizei[SKAITINIAI_PAGRINDINIAI]
+    analysis_df[CANDIDATE_NUMERIC]
     .agg(["min", "max"])
     .round(2)
 )
@@ -777,21 +818,21 @@ print(
 print("\nT_TIPAS KIEKIAI (retos kategorijos):")
 print(
     pd.crosstab(
-        analizei["klase"],
-        analizei["T_tipas"]
+        analysis_df["klase"],
+        analysis_df["T_tipas"]
     )
 )
 
 
 # Patikriname hipotezę, ar 232 įrašas lemia platesnį
 # A klasės QRS pasiskirstymą.
-yra232 = analizei["irasas"].astype(str) == "232"
-a_kl = analizei["klase"] == "A"
+is_232 = analysis_df["irasas"].astype(str) == "232"
+is_a = analysis_df["klase"] == "A"
 
 print("\nA KLASĖ: 232 ĮRAŠAS (True) VS KITI (False), MEDIANOS:")
 print(
-    analizei[a_kl]
-    .groupby(yra232[a_kl])[["QRS", "RR_post"]]
+    analysis_df[is_a]
+    .groupby(is_232[is_a])[["QRS", "RR_post"]]
     .median()
     .round(1)
 )
@@ -799,34 +840,34 @@ print(
 
 # Patikriname, iš kokių įrašų ateina labai ilgi
 # R klasės RR_pre intervalai.
-r_kl = analizei[analizei["klase"] == "R"]
+r_class = analysis_df[analysis_df["klase"] == "R"]
 
 print("\nR KLASĖS RR_pre > 2000 ms PAGAL ĮRAŠĄ:")
 print(
-    r_kl.loc[
-        r_kl["RR_pre"] > 2000,
+    r_class.loc[
+        r_class["RR_pre"] > 2000,
         "irasas"
     ].value_counts()
 )
 
 
-# Patikriname, ar N klasės RR_sant išskirtys
+# Patikriname, ar N klasės RR_sant_vid išskirtys
 # dažniau susijusios su AFIB ritmu.
-n_kl = analizei[analizei["klase"] == "N"]
+n_class = analysis_df[analysis_df["klase"] == "N"]
 
-q1 = n_kl["RR_sant"].quantile(0.25)
-q3 = n_kl["RR_sant"].quantile(0.75)
+q1 = n_class["RR_sant_vid"].quantile(0.25)
+q3 = n_class["RR_sant_vid"].quantile(0.75)
 iqr = q3 - q1
 
-isk = ~n_kl["RR_sant"].between(
+is_outlier = ~n_class["RR_sant_vid"].between(
     q1 - 1.5 * iqr,
     q3 + 1.5 * iqr
 )
 
-afib = n_kl["ritmas"] == "(AFIB"
+is_afib = n_class["ritmas"] == "(AFIB"
 
 print(
-    f"\nN RR_sant: AFIB dalis tarp išskirčių "
-    f"{afib[isk].mean() * 100:.1f} %, "
-    f"tarp kitų {afib[~isk].mean() * 100:.1f} %"
+    f"\nN RR_sant_vid: AFIB dalis tarp išskirčių "
+    f"{is_afib[is_outlier].mean() * 100:.1f} %, "
+    f"tarp kitų {is_afib[~is_outlier].mean() * 100:.1f} %"
 )
