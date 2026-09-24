@@ -10,7 +10,8 @@ FEATURES = [
     "RR_pre",
     "RR_post",
     "RR_vid",
-    "RR_sant",
+    "RR_sant_vid",
+    "RR_sant_post",
     "PR",
     "QRS",
     "QT",
@@ -23,6 +24,15 @@ FEATURES = [
     "P_yra",
     "T_tipas",
 ]
+
+
+def add_rr_ratios(df):
+    df = df.copy()
+
+    df["RR_sant_vid"] = df["RR_pre"] / df["RR_vid"]
+    df["RR_sant_post"] = df["RR_pre"] / df["RR_post"]
+
+    return df
 
 
 def kruskal_wallis_table(df, features, class_column, classes):
@@ -66,6 +76,7 @@ def format_p_value(p_value):
 
 if __name__ == "__main__":
     data = pd.read_csv(DATA_FILE)
+    data = add_rr_ratios(data)
 
     results = kruskal_wallis_table(data, FEATURES, CLASS_COLUMN, CLASSES)
 
