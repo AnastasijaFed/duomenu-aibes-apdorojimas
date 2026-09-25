@@ -46,7 +46,7 @@ env/
 # IDE
 .vscode/
 .idea/
-
+/myenv
 # OS
 .DS_Store
 Thumbs.db
