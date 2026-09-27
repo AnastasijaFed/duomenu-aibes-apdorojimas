@@ -1,0 +1,92 @@
+﻿feature_1,feature_2,n,rho,p_value,strength,significant
+RR_pre,RR_vid,1000,0.7113,< 0.001,stipri,True
+RR_post,RR_sant_post,999,-0.6979,< 0.001,vidutinė,True
+RR_vid,RR_sant_vid,1000,-0.6959,< 0.001,vidutinė,True
+QT,QTc,944,0.6932,< 0.001,vidutinė,True
+RR_pre,QT,944,0.613,< 0.001,vidutinė,True
+RR_vid,QT,944,0.5795,< 0.001,vidutinė,True
+RR_post,RR_vid,999,0.5292,< 0.001,vidutinė,True
+RR_pre,QRS_max,995,-0.4835,< 0.001,vidutinė,True
+RR_pre,RR_post,999,0.465,< 0.001,vidutinė,True
+P_amp,ST,473,0.4488,< 0.001,vidutinė,True
+RR_post,QT,944,0.4243,< 0.001,vidutinė,True
+RR_post,RR_sant_vid,999,-0.4153,< 0.001,vidutinė,True
+QRS,ST,995,0.4121,< 0.001,vidutinė,True
+RR_sant_vid,QRS_min,995,-0.4,< 0.001,vidutinė,True
+RR_vid,QRS_max,995,-0.3993,< 0.001,vidutinė,True
+QRS,QT,944,0.3939,< 0.001,vidutinė,True
+RR_sant_vid,RR_sant_post,999,0.3887,< 0.001,vidutinė,True
+RR_pre,PR,473,0.3852,< 0.001,vidutinė,True
+RR_pre,P_amp,473,-0.3758,< 0.001,vidutinė,True
+QT,QRS_max,944,-0.3754,< 0.001,vidutinė,True
+PR,ST,473,-0.3607,< 0.001,vidutinė,True
+RR_pre,T_amp,944,0.344,< 0.001,vidutinė,True
+QRS,QRS_max,995,-0.3368,< 0.001,vidutinė,True
+QTc,QRS_min,944,0.3323,< 0.001,vidutinė,True
+QRS,QTc,944,0.3254,< 0.001,vidutinė,True
+RR_vid,QRS_min,995,0.3103,< 0.001,vidutinė,True
+RR_post,QRS_min,995,0.2938,< 0.001,silpna,True
+QT,QRS_min,944,0.2787,< 0.001,silpna,True
+RR_post,QTc,944,0.2786,< 0.001,silpna,True
+RR_sant_vid,QTc,944,-0.2783,< 0.001,silpna,True
+RR_pre,QRS,995,0.2762,< 0.001,silpna,True
+RR_vid,P_amp,473,-0.2756,< 0.001,silpna,True
+RR_sant_post,QTc,944,-0.2564,< 0.001,silpna,True
+RR_post,QRS,995,0.2515,< 0.001,silpna,True
+PR,QRS_max,473,-0.251,< 0.001,silpna,True
+RR_vid,QRS,995,0.2453,< 0.001,silpna,True
+RR_post,P_amp,473,-0.2366,< 0.001,silpna,True
+PR,P_amp,473,-0.2331,< 0.001,silpna,True
+RR_sant_post,QRS_min,995,-0.2313,< 0.001,silpna,True
+PR,QTc,446,-0.2226,< 0.001,silpna,True
+P_amp,QRS_max,473,0.2217,< 0.001,silpna,True
+RR_vid,PR,473,0.2169,< 0.001,silpna,True
+RR_vid,T_amp,944,0.2166,< 0.001,silpna,True
+T_amp,QRS_min,944,-0.214,< 0.001,silpna,True
+RR_vid,ST,995,-0.214,< 0.001,silpna,True
+RR_vid,QTc,944,0.1978,< 0.001,silpna,True
+QT,T_amp,944,0.1957,< 0.001,silpna,True
+RR_sant_vid,QT,944,-0.193,< 0.001,silpna,True
+PR,QRS,473,-0.1831,< 0.001,silpna,True
+T_amp,ST,944,0.1796,< 0.001,silpna,True
+RR_pre,ST,995,-0.1715,< 0.001,silpna,True
+QRS_max,QRS_min,995,-0.1701,< 0.001,silpna,True
+RR_sant_vid,ST,995,0.1677,< 0.001,silpna,True
+T_amp,QRS_max,944,-0.1605,< 0.001,silpna,True
+PR,QRS_min,473,-0.1513,< 0.001,silpna,True
+ST,QRS_max,995,-0.1511,< 0.001,silpna,True
+RR_pre,QRS_min,995,0.1456,< 0.001,silpna,True
+PR,T_amp,446,0.1447,0.002,silpna,True
+QT,P_amp,446,-0.1423,0.003,silpna,True
+RR_pre,RR_sant_post,999,0.1379,< 0.001,silpna,True
+RR_post,QRS_max,995,-0.136,< 0.001,silpna,True
+RR_sant_post,T_amp,944,0.1348,< 0.001,silpna,True
+RR_sant_vid,P_amp,473,0.1322,0.004,silpna,True
+RR_sant_post,QRS_max,995,-0.1272,< 0.001,silpna,True
+QT,ST,944,-0.1234,< 0.001,silpna,True
+QTc,QRS_max,944,-0.1214,< 0.001,silpna,True
+RR_vid,RR_sant_post,999,-0.1205,< 0.001,silpna,True
+RR_sant_post,PR,473,0.1145,0.013,silpna,False
+RR_sant_post,QRS,995,-0.1065,< 0.001,silpna,True
+RR_post,PR,473,0.1064,0.021,silpna,False
+QRS,P_amp,473,0.1061,0.021,silpna,False
+RR_pre,RR_sant_vid,1000,-0.1042,< 0.001,silpna,True
+QRS,T_amp,944,0.1015,0.002,silpna,True
+RR_post,ST,995,-0.1012,0.001,silpna,True
+QRS,QRS_min,995,0.0933,0.003,silpna,True
+RR_sant_vid,T_amp,944,0.092,0.005,silpna,True
+P_amp,QRS_min,473,-0.0869,0.059,silpna,False
+RR_sant_vid,QRS,995,-0.0654,0.039,silpna,False
+PR,QT,446,-0.0358,0.451,silpna,False
+QTc,ST,944,-0.0344,0.291,silpna,False
+ST,QRS_min,995,-0.0293,0.356,silpna,False
+RR_sant_post,QT,944,-0.0265,0.416,silpna,False
+P_amp,T_amp,446,-0.0187,0.693,silpna,False
+QTc,T_amp,944,0.0168,0.606,silpna,False
+QTc,P_amp,446,-0.0142,0.764,silpna,False
+RR_sant_vid,QRS_max,995,0.013,0.682,silpna,False
+RR_sant_vid,PR,473,0.0118,0.798,silpna,False
+RR_pre,QTc,944,0.0104,0.749,silpna,False
+RR_sant_post,ST,995,-0.01,0.752,silpna,False
+RR_post,T_amp,944,-0.0029,0.929,silpna,False
+RR_sant_post,P_amp,473,0.0004,0.993,silpna,False

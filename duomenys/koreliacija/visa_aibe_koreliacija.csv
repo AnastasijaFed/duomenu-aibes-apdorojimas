@@ -1,0 +1,92 @@
+﻿feature_1,feature_2,n,rho,p_value,strength,significant
+RR_pre,RR_vid,4996,0.7247,< 0.001,stipri,True
+T_amp,ST,4840,0.7148,< 0.001,stipri,True
+RR_post,RR_vid,4994,0.6953,< 0.001,vidutinė,True
+RR_sant_vid,RR_sant_post,4994,0.6936,< 0.001,vidutinė,True
+QT,QTc,4837,0.6276,< 0.001,vidutinė,True
+RR_pre,RR_sant_vid,4996,0.5861,< 0.001,vidutinė,True
+RR_vid,QT,4837,0.5347,< 0.001,vidutinė,True
+RR_post,QT,4840,0.513,< 0.001,vidutinė,True
+RR_pre,QT,4837,0.4821,< 0.001,vidutinė,True
+RR_pre,RR_sant_post,4994,0.4794,< 0.001,vidutinė,True
+RR_sant_post,QTc,4837,-0.4644,< 0.001,vidutinė,True
+RR_pre,RR_post,4994,0.4304,< 0.001,vidutinė,True
+P_amp,QRS_max,2214,0.4259,< 0.001,vidutinė,True
+RR_post,RR_sant_post,4994,-0.4072,< 0.001,vidutinė,True
+RR_sant_vid,QTc,4837,-0.3866,< 0.001,vidutinė,True
+T_amp,QRS_max,4840,-0.3485,< 0.001,vidutinė,True
+ST,QRS_max,4965,-0.3452,< 0.001,vidutinė,True
+QRS,QTc,4837,0.3252,< 0.001,vidutinė,True
+RR_pre,QTc,4837,-0.2934,< 0.001,silpna,True
+QRS_max,QRS_min,4965,0.2724,< 0.001,silpna,True
+QRS,QRS_min,4965,-0.2628,< 0.001,silpna,True
+QRS,QT,4840,0.246,< 0.001,silpna,True
+RR_sant_vid,P_amp,2211,0.238,< 0.001,silpna,True
+RR_post,QTc,4837,0.2296,< 0.001,silpna,True
+PR,QRS_max,2209,-0.2239,< 0.001,silpna,True
+P_amp,ST,2214,0.2237,< 0.001,silpna,True
+P_amp,T_amp,2156,0.2121,< 0.001,silpna,True
+PR,ST,2209,-0.2026,< 0.001,silpna,True
+RR_vid,PR,2206,0.202,< 0.001,silpna,True
+PR,T_amp,2156,-0.2014,< 0.001,silpna,True
+T_amp,QRS_min,4840,-0.2009,< 0.001,silpna,True
+RR_sant_vid,QRS_max,4962,0.1804,< 0.001,silpna,True
+QTc,P_amp,2153,-0.1724,< 0.001,silpna,True
+RR_vid,P_amp,2211,-0.1723,< 0.001,silpna,True
+PR,QRS_min,2209,-0.1558,< 0.001,silpna,True
+RR_pre,PR,2206,0.1543,< 0.001,silpna,True
+QRS,T_amp,4840,-0.1498,< 0.001,silpna,True
+QTc,QRS_min,4837,-0.1497,< 0.001,silpna,True
+RR_post,RR_sant_vid,4994,-0.1424,< 0.001,silpna,True
+QTc,QRS_max,4837,-0.1385,< 0.001,silpna,True
+ST,QRS_min,4965,-0.1278,< 0.001,silpna,True
+RR_sant_post,P_amp,2211,0.1268,< 0.001,silpna,True
+PR,P_amp,2209,-0.1185,< 0.001,silpna,True
+RR_sant_post,QRS,4962,-0.111,< 0.001,silpna,True
+RR_post,P_amp,2214,-0.1093,< 0.001,silpna,True
+QT,P_amp,2156,-0.1091,< 0.001,silpna,True
+RR_sant_vid,QT,4837,0.0989,< 0.001,silpna,True
+PR,QT,2156,0.0914,< 0.001,silpna,True
+RR_vid,QRS_min,4962,0.0907,< 0.001,silpna,True
+RR_post,QRS,4965,0.0899,< 0.001,silpna,True
+QT,QRS_min,4840,-0.0882,< 0.001,silpna,True
+RR_sant_post,QRS_max,4962,0.0851,< 0.001,silpna,True
+QT,T_amp,4840,0.0804,< 0.001,silpna,True
+RR_post,PR,2209,0.0766,< 0.001,silpna,True
+QTc,T_amp,4837,0.0721,< 0.001,silpna,True
+RR_vid,QRS_max,4962,-0.0658,< 0.001,silpna,True
+RR_pre,QRS_min,4962,0.0609,< 0.001,silpna,True
+QRS,QRS_max,4965,-0.0572,< 0.001,silpna,True
+RR_pre,QRS_max,4962,0.0547,< 0.001,silpna,True
+RR_sant_post,PR,2206,0.0505,0.018,silpna,False
+RR_sant_post,QRS_min,4962,0.0499,< 0.001,silpna,True
+QT,QRS_max,4840,-0.0461,0.001,silpna,True
+RR_vid,RR_sant_post,4994,0.0445,0.002,silpna,True
+RR_sant_vid,QRS,4962,-0.0436,0.002,silpna,True
+RR_pre,QRS,4962,-0.0425,0.003,silpna,True
+RR_vid,QRS,4962,-0.0418,0.003,silpna,True
+RR_vid,QTc,4837,-0.0362,0.012,silpna,False
+RR_vid,RR_sant_vid,4996,-0.0361,0.011,silpna,False
+RR_sant_vid,ST,4962,0.035,0.014,silpna,False
+RR_pre,ST,4962,0.0339,0.017,silpna,False
+QRS,P_amp,2214,-0.0337,0.113,silpna,False
+RR_sant_post,ST,4962,0.029,0.041,silpna,False
+P_amp,QRS_min,2214,0.0244,0.252,silpna,False
+QT,ST,4840,0.0212,0.141,silpna,False
+RR_sant_post,T_amp,4837,-0.0206,0.151,silpna,False
+RR_post,ST,4965,-0.0201,0.158,silpna,False
+RR_sant_post,QT,4837,-0.019,0.187,silpna,False
+RR_sant_vid,QRS_min,4962,0.0172,0.227,silpna,False
+RR_pre,T_amp,4837,0.0169,0.240,silpna,False
+RR_sant_vid,T_amp,4837,-0.0142,0.323,silpna,False
+RR_vid,T_amp,4837,0.013,0.368,silpna,False
+RR_pre,P_amp,2211,0.0113,0.595,silpna,False
+QTc,ST,4837,-0.0111,0.440,silpna,False
+RR_post,T_amp,4840,-0.0096,0.503,silpna,False
+RR_vid,ST,4962,-0.0076,0.591,silpna,False
+QRS,ST,4965,0.0067,0.635,silpna,False
+RR_sant_vid,PR,2206,-0.0039,0.853,silpna,False
+RR_post,QRS_max,4965,-0.0028,0.845,silpna,False
+PR,QTc,2153,0.0021,0.922,silpna,False
+RR_post,QRS_min,4965,-0.0014,0.923,silpna,False
+PR,QRS,2209,-0.0008,0.970,silpna,False
