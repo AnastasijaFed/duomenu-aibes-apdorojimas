@@ -1,0 +1,92 @@
+﻿feature_1,feature_2,n,rho,p_value,strength,significant
+RR_pre,RR_vid,1000,0.9104,< 0.001,stipri,True
+RR_post,RR_vid,1000,0.8703,< 0.001,stipri,True
+RR_pre,RR_post,1000,0.7749,< 0.001,stipri,True
+QT,QTc,963,0.6659,< 0.001,vidutinė,True
+RR_post,QT,963,0.6268,< 0.001,vidutinė,True
+RR_sant_vid,RR_sant_post,1000,0.6265,< 0.001,vidutinė,True
+RR_vid,QT,963,0.6002,< 0.001,vidutinė,True
+RR_pre,QT,963,0.556,< 0.001,vidutinė,True
+T_amp,ST,963,0.5363,< 0.001,vidutinė,True
+P_amp,QRS_max,523,0.4816,< 0.001,vidutinė,True
+QRS,T_amp,963,-0.3546,< 0.001,vidutinė,True
+RR_pre,RR_sant_vid,1000,0.3509,< 0.001,vidutinė,True
+RR_sant_post,QTc,963,-0.3393,< 0.001,vidutinė,True
+T_amp,QRS_max,963,0.3166,< 0.001,vidutinė,True
+T_amp,QRS_min,963,-0.301,< 0.001,vidutinė,True
+QRS,QTc,963,0.2863,< 0.001,silpna,True
+RR_post,RR_sant_post,1000,-0.2672,< 0.001,silpna,True
+QRS,P_amp,523,-0.2633,< 0.001,silpna,True
+P_amp,T_amp,509,0.2588,< 0.001,silpna,True
+QRS,QRS_max,992,-0.2584,< 0.001,silpna,True
+QTc,T_amp,963,-0.2475,< 0.001,silpna,True
+QRS,QT,963,0.2453,< 0.001,silpna,True
+RR_sant_vid,QTc,963,-0.2433,< 0.001,silpna,True
+RR_vid,ST,992,0.2395,< 0.001,silpna,True
+RR_pre,RR_sant_post,1000,0.2376,< 0.001,silpna,True
+RR_post,ST,992,0.2358,< 0.001,silpna,True
+PR,ST,523,0.2357,< 0.001,silpna,True
+QRS,ST,992,-0.2275,< 0.001,silpna,True
+RR_pre,ST,992,0.227,< 0.001,silpna,True
+PR,QRS_min,523,-0.2092,< 0.001,silpna,True
+PR,QTc,509,-0.1964,< 0.001,silpna,True
+RR_pre,QTc,963,-0.1889,< 0.001,silpna,True
+RR_post,T_amp,963,0.1847,< 0.001,silpna,True
+QTc,ST,963,-0.1744,< 0.001,silpna,True
+RR_vid,PR,523,0.1667,< 0.001,silpna,True
+RR_pre,T_amp,963,0.1506,< 0.001,silpna,True
+RR_vid,T_amp,963,0.1482,< 0.001,silpna,True
+RR_pre,PR,523,0.1409,0.001,silpna,True
+ST,QRS_max,992,-0.1383,< 0.001,silpna,True
+PR,P_amp,523,-0.1318,0.003,silpna,True
+RR_post,PR,523,0.1318,0.003,silpna,True
+RR_sant_vid,P_amp,523,-0.1254,0.004,silpna,True
+QRS_max,QRS_min,992,-0.1241,< 0.001,silpna,True
+PR,QRS_max,523,-0.1165,0.008,silpna,True
+PR,QRS,523,-0.1156,0.008,silpna,True
+QTc,QRS_max,963,-0.1121,< 0.001,silpna,True
+RR_pre,P_amp,523,-0.1022,0.019,silpna,False
+RR_sant_post,QT,963,-0.102,0.002,silpna,True
+PR,T_amp,509,0.0985,0.026,silpna,False
+QT,P_amp,509,-0.0833,0.060,silpna,False
+RR_vid,QRS_max,992,0.082,0.010,silpna,True
+RR_vid,QTc,963,-0.0722,0.025,silpna,False
+QT,T_amp,963,-0.0703,0.029,silpna,False
+RR_sant_vid,QRS_min,992,0.065,0.041,silpna,False
+RR_sant_post,QRS_min,992,0.0615,0.053,silpna,False
+RR_sant_post,PR,523,0.0577,0.188,silpna,False
+RR_pre,QRS_max,992,0.0567,0.074,silpna,False
+RR_post,QRS_max,992,0.053,0.096,silpna,False
+QTc,P_amp,509,-0.0523,0.239,silpna,False
+RR_sant_vid,QT,963,0.0518,0.108,silpna,False
+QT,QRS_max,963,-0.0513,0.112,silpna,False
+RR_post,QTc,963,0.0492,0.127,silpna,False
+QT,QRS_min,963,-0.0456,0.158,silpna,False
+RR_sant_vid,PR,523,0.0446,0.309,silpna,False
+RR_vid,P_amp,523,-0.0394,0.368,silpna,False
+RR_post,QRS,992,0.0386,0.224,silpna,False
+QTc,QRS_min,963,-0.0386,0.232,silpna,False
+RR_post,P_amp,523,-0.0382,0.383,silpna,False
+RR_sant_post,P_amp,523,-0.0381,0.384,silpna,False
+RR_sant_post,T_amp,963,-0.0377,0.242,silpna,False
+RR_vid,QRS,992,0.0371,0.243,silpna,False
+RR_pre,QRS_min,992,0.0341,0.284,silpna,False
+RR_pre,QRS,992,0.0339,0.285,silpna,False
+P_amp,QRS_min,523,0.0333,0.447,silpna,False
+PR,QT,509,-0.0314,0.479,silpna,False
+QT,ST,963,0.0288,0.372,silpna,False
+RR_sant_vid,QRS_max,992,-0.0262,0.410,silpna,False
+RR_sant_post,QRS_max,992,0.026,0.414,silpna,False
+RR_vid,RR_sant_vid,1000,0.0257,0.417,silpna,False
+ST,QRS_min,992,-0.021,0.508,silpna,False
+RR_sant_post,ST,992,-0.0145,0.647,silpna,False
+RR_post,QRS_min,992,-0.0139,0.662,silpna,False
+RR_sant_vid,T_amp,963,-0.0139,0.667,silpna,False
+RR_sant_post,QRS,992,-0.0134,0.673,silpna,False
+RR_vid,QRS_min,992,0.0099,0.756,silpna,False
+RR_sant_vid,QRS,992,0.0086,0.787,silpna,False
+P_amp,ST,523,-0.008,0.855,silpna,False
+RR_vid,RR_sant_post,1000,0.0058,0.854,silpna,False
+RR_post,RR_sant_vid,1000,-0.0056,0.860,silpna,False
+QRS,QRS_min,992,0.0053,0.868,silpna,False
+RR_sant_vid,ST,992,0.0031,0.922,silpna,False
